@@ -1,6 +1,5 @@
-import { Workflow, Step } from "@mastra/core";
+import { Workflow, Step } from "@mastra/core/workflows";
 import { z } from "zod";
-import { cursorRulesAgent } from "../agents";
 
 // ワークフローの入力スキーマ
 const cursorRulesWorkflowSchema = z.object({
