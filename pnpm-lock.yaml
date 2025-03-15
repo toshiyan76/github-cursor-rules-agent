@@ -25,13 +25,16 @@ importers:
         version: 0.2.1(react@19.0.0)
       '@mastra/rag':
         specifier: ^0.1.9
-        version: 0.1.9(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(ai@4.1.61(react@19.0.0)(zod@3.24.2))(cohere-ai@7.16.0)(gpt-tokenizer@2.9.0)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)(react@19.0.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)
+        version: 0.1.9(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(ai@4.1.61(react@19.0.0)(zod@3.24.2))(cohere-ai@7.16.0)(gpt-tokenizer@2.9.0)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)(react@19.0.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)
       ai:
         specifier: ^4.0.0
         version: 4.1.61(react@19.0.0)(zod@3.24.2)
       mastra:
         specifier: ^0.3.1
         version: 0.3.1(@opentelemetry/api@1.9.0)(react@19.0.0)
+      openai:
+        specifier: ^4.87.3
+        version: 4.87.3(ws@8.18.1)(zod@3.24.2)
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -6388,13 +6391,13 @@ snapshots:
       - pathe
       - tiktoken
 
-  '@llamaindex/postgres@0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)':
+  '@llamaindex/postgres@0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)':
     dependencies:
       '@llamaindex/core': 0.4.23(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
       '@llamaindex/env': 0.1.27(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
-      pg-promise: 11.11.0(pg-query-stream@4.7.3(pg@8.14.0))
+      pg-promise: 11.11.0(pg-query-stream@4.7.3(pg@8.13.3))
     optionalDependencies:
-      pg: 8.14.0
+      pg: 8.13.3
     transitivePeerDependencies:
       - '@aws-crypto/sha256-js'
       - '@huggingface/transformers'
@@ -6609,7 +6612,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@mastra/rag@0.1.9(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(ai@4.1.61(react@19.0.0)(zod@3.24.2))(cohere-ai@7.16.0)(gpt-tokenizer@2.9.0)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)(react@19.0.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)':
+  '@mastra/rag@0.1.9(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(ai@4.1.61(react@19.0.0)(zod@3.24.2))(cohere-ai@7.16.0)(gpt-tokenizer@2.9.0)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)(react@19.0.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)':
     dependencies:
       '@llamaindex/core': 0.4.23(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
       '@llamaindex/env': 0.1.29(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)
@@ -6617,7 +6620,7 @@ snapshots:
       '@paralleldrive/cuid2': 2.2.2
       ai: 4.1.61(react@19.0.0)(zod@3.24.2)
       js-tiktoken: 1.0.19
-      llamaindex: 0.8.37(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(cohere-ai@7.16.0)(js-tiktoken@1.0.19)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)(zod@3.24.2)
+      llamaindex: 0.8.37(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(cohere-ai@7.16.0)(js-tiktoken@1.0.19)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)(zod@3.24.2)
       node-html-better-parser: 1.4.7
       pathe: 2.0.3
       zod: 3.24.2
@@ -9287,7 +9290,7 @@ snapshots:
     dependencies:
       immediate: 3.0.6
 
-  llamaindex@0.8.37(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(cohere-ai@7.16.0)(js-tiktoken@1.0.19)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)(zod@3.24.2):
+  llamaindex@0.8.37(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-providers@3.768.0)(@huggingface/transformers@3.4.0)(cohere-ai@7.16.0)(js-tiktoken@1.0.19)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)(tree-sitter@0.22.4)(typescript@5.8.2)(web-tree-sitter@0.24.7)(ws@8.18.1)(zod@3.24.2):
     dependencies:
       '@llamaindex/anthropic': 0.0.33(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(@types/node@22.13.10)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
       '@llamaindex/astra': 0.0.4(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
@@ -9311,7 +9314,7 @@ snapshots:
       '@llamaindex/openai': 0.1.51(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(ws@8.18.1)(zod@3.24.2)
       '@llamaindex/pinecone': 0.0.4(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
       '@llamaindex/portkey-ai': 0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
-      '@llamaindex/postgres': 0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.14.0))(pg@8.14.0)
+      '@llamaindex/postgres': 0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(pg-query-stream@4.7.3(pg@8.13.3))(pg@8.13.3)
       '@llamaindex/qdrant': 0.0.4(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)(typescript@5.8.2)
       '@llamaindex/readers': 1.0.25(@aws-sdk/credential-providers@3.768.0)(@llamaindex/core@0.4.23(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3))(@llamaindex/env@0.1.27(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3))
       '@llamaindex/replicate': 0.0.32(@aws-crypto/sha256-js@5.2.0)(@huggingface/transformers@3.4.0)(gpt-tokenizer@2.9.0)(js-tiktoken@1.0.19)(pathe@2.0.3)
@@ -9798,9 +9801,9 @@ snapshots:
 
   pg-connection-string@2.7.0: {}
 
-  pg-cursor@2.13.0(pg@8.14.0):
+  pg-cursor@2.13.0(pg@8.13.3):
     dependencies:
-      pg: 8.14.0
+      pg: 8.13.3
 
   pg-int8@1.0.1: {}
 
@@ -9814,22 +9817,22 @@ snapshots:
     dependencies:
       pg: 8.14.0
 
-  pg-promise@11.11.0(pg-query-stream@4.7.3(pg@8.14.0)):
+  pg-promise@11.11.0(pg-query-stream@4.7.3(pg@8.13.3)):
     dependencies:
       assert-options: 0.8.2
       pg: 8.13.3
       pg-minify: 1.7.0
-      pg-query-stream: 4.7.3(pg@8.14.0)
+      pg-query-stream: 4.7.3(pg@8.13.3)
       spex: 3.4.0
     transitivePeerDependencies:
       - pg-native
 
   pg-protocol@1.8.0: {}
 
-  pg-query-stream@4.7.3(pg@8.14.0):
+  pg-query-stream@4.7.3(pg@8.13.3):
     dependencies:
-      pg: 8.14.0
-      pg-cursor: 2.13.0(pg@8.14.0)
+      pg: 8.13.3
+      pg-cursor: 2.13.0(pg@8.13.3)
 
   pg-types@2.2.0:
     dependencies:
