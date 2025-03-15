@@ -1,11 +1,6 @@
 import { Workflow, Step } from "@mastra/core/workflows";
 import { z } from "zod";
-import { cursorRulesAgent } from "../agents";
-import { Agent } from "@mastra/core";
-import {
-    CloneOutput,
-    cloneOutputSchema,
-} from "../tools/github/cloneRepository";
+import { cloneOutputSchema } from "../tools/github/cloneRepository";
 import path from "path";
 import process from "process";
 
