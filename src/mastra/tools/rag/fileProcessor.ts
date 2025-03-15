@@ -36,10 +36,6 @@ export const fileProcessorTool = createTool({
             .default("vector_store.db")
             .describe("ベクトルストアのDBパス"),
         indexName: z.string().describe("ベクトルストアのインデックス名"),
-        extractMetadata: z
-            .boolean()
-            .default(true)
-            .describe("メタデータを抽出するか"),
     }),
     outputSchema: z.object({
         success: z.boolean(),
@@ -59,7 +55,6 @@ export const fileProcessorTool = createTool({
             separator,
             dbPath,
             indexName,
-            extractMetadata,
         } = context;
 
         try {
