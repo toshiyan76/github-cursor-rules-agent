@@ -1,3 +1,6 @@
+import { createTool } from "@mastra/core/tools";
+import { z } from "zod";
+
 // GitHubツール
 export { cloneRepositoryTool } from "./github/cloneRepository";
 
@@ -8,4 +11,3 @@ export { treeAnalyzerTool } from "./analysis/treeAnalyzer";
 
 // RAGツール
 export { fileProcessorTool } from "./rag/fileProcessor";
-export { vectorQueryTool } from "./rag/vectorQuery";

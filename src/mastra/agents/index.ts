@@ -1,15 +1,16 @@
-import { Agent } from "@mastra/core/agent";
+import { Agent } from "@mastra/core";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
-import { LIBSQL_PROMPT } from "@mastra/rag";
 import {
     cloneRepositoryTool,
     readmeAnalyzerTool,
     tokeiAnalyzerTool,
     treeAnalyzerTool,
     fileProcessorTool,
-    vectorQueryTool,
 } from "../tools";
+
+// モデルの定義（Geminiを使用）
+
+console.log(process.env.GOOGLE_API_KEY);
 
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
@@ -48,10 +49,7 @@ export const cursorRulesAgent = new Agent({
 - ファイル処理後は、処理したファイルリストをmetadata.processedFilesとして返す
 
 各ステップでの判断は、前のステップで得られた情報に基づいて行ってください。
-会話の流れを記憶し、一連の処理として継続してください。
-
-${LIBSQL_PROMPT}
-`,
+会話の流れを記憶し、一連の処理として継続してください。`,
     model: google("gemini-2.0-flash-001"),
     tools: {
         cloneRepositoryTool,
@@ -59,6 +57,5 @@ ${LIBSQL_PROMPT}
         tokeiAnalyzerTool,
         treeAnalyzerTool,
         fileProcessorTool,
-        vectorQueryTool,
     },
 });
