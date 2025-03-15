@@ -43,14 +43,7 @@ export const saveCheatsheetTool = createTool({
     }),
     outputSchema: saveCheatsheetOutputSchema,
     execute: async ({ context }) => {
-        const {
-            content,
-            outputPath,
-            append,
-            section,
-            sectionIndex,
-            totalSections,
-        } = context;
+        const { content, outputPath, append, section } = context;
 
         try {
             // 出力ディレクトリが存在することを確認
