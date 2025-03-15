@@ -25,7 +25,7 @@ const cloneRepositoryStep = new Step({
     execute: async ({ context, mastra }) => {
         const { repositoryUrl, branch } = context.getStepResult("trigger");
 
-        const agent = await mastra?.getAgent("cursorRulesAgent");
+        const agent = mastra?.getAgent("cursorRulesAgent");
         const response = await agent?.generate(
             `リポジトリ ${repositoryUrl} をクローンしてください${branch ? `（ブランチ: ${branch}）` : ""}。`
         );
@@ -53,18 +53,18 @@ const analyzeRepositoryStep = new Step({
             throw new Error("リポジトリパスが見つかりません");
         }
 
-        const agent = await mastra!.getAgent("cursorRulesAgent");
-        const response = await agent.generate(
+        const agent = mastra?.getAgent("cursorRulesAgent");
+        const response = await agent?.generate(
             `リポジトリ ${repositoryPath} のREADME、tokei統計、ディレクトリ構造を分析してください。`
         );
 
         return {
             success: true,
-            summary: response.text,
-            readmeInfo: response.toolCalls?.[0]?.args?.readmeInfo || {},
-            tokeiStats: response.toolCalls?.[0]?.args?.tokeiStats || {},
+            summary: response?.text || "",
+            readmeInfo: response?.toolCalls?.[0]?.args?.readmeInfo || {},
+            tokeiStats: response?.toolCalls?.[0]?.args?.tokeiStats || {},
             directoryStructure:
-                response.toolCalls?.[0]?.args?.directoryStructure || {},
+                response?.toolCalls?.[0]?.args?.directoryStructure || {},
         };
     },
 });
@@ -85,7 +85,7 @@ const identifyImportantFilesStep = new Step({
         const { summary, readmeInfo, tokeiStats, directoryStructure } =
             context.getStepResult("analyze-repository");
 
-        const agent = await mastra!.getAgent("cursorRulesAgent");
+        const agent = mastra!.getAgent("cursorRulesAgent");
         const response = await agent.generate(`
 これまでの分析に基づいて、リポジトリ ${repositoryPath} の重要なファイルを特定し、それらをベクトルデータベースに格納するための計画を立ててください。
 以下の情報を参考にしてください：
@@ -117,7 +117,7 @@ const processFilesStep = new Step({
             "identify-important-files"
         );
 
-        const agent = await mastra!.getAgent("cursorRulesAgent");
+        const agent = mastra!.getAgent("cursorRulesAgent");
         const response = await agent.generate(`
 リポジトリ ${repositoryPath} の重要ファイルをベクトルデータベースに格納してください。
 処理計画: ${plan}
@@ -150,7 +150,7 @@ const generateCursorRulesStep = new Step({
             outputPath ||
             `./.cursor/rules/${repositoryPath.split("/").pop()}.mdc`;
 
-        const agent = await mastra!.getAgent("cursorRulesAgent");
+        const agent = mastra!.getAgent("cursorRulesAgent");
         const response = await agent.generate(`
 ベクトルデータベースに格納された情報を元に、${repositoryPath} プロジェクトのためのCursor Rulesチートシートを生成してください。
 処理済みファイル: ${JSON.stringify(processedFiles)}

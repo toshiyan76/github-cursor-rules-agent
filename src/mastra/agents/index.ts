@@ -1,5 +1,8 @@
 import { Agent } from "@mastra/core/agent";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { Memory } from "@mastra/memory";
+import { LibSQLStore } from "@mastra/core/storage/libsql";
+import { LibSQLVector } from "@mastra/core/vector/libsql";
 import {
     cloneRepositoryTool,
     readmeAnalyzerTool,
@@ -7,6 +10,7 @@ import {
     treeAnalyzerTool,
     fileProcessorTool,
 } from "../tools";
+import { vectorQueryTool } from "../tools/rag/vectorQuery";
 
 // モデルの定義（Geminiを使用）
 
@@ -15,6 +19,25 @@ console.log(process.env.GOOGLE_API_KEY);
 // Google Gemini AIプロバイダーの作成
 const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_API_KEY || "",
+});
+
+// メモリの設定（LibSQLをストレージとベクターデータベースに使用）
+const memory = new Memory({
+    storage: new LibSQLStore({
+        config: {
+            url: process.env.DATABASE_URL || "file:local.db",
+        },
+    }),
+    vector: new LibSQLVector({
+        connectionUrl: process.env.DATABASE_URL || "file:local.db",
+    }),
+    options: {
+        lastMessages: 10,
+        semanticRecall: {
+            topK: 3,
+            messageRange: 2,
+        },
+    },
 });
 
 // 単一のCursor Rules生成エージェント
@@ -30,6 +53,7 @@ export const cursorRulesAgent = new Agent({
 5. 重要なファイルを特定し、それらをベクトルデータベースに格納する計画を立てる
 6. 重要ファイルをチャンキングしてベクトルデータベースに格納する
 7. 収集した情報を元にCursor Rulesチートシートを作成する
+8. 必要に応じてベクトル検索を使用して関連コード片を検索する
 
 リポジトリの内容を深く理解するために、以下の点に注意してください：
 - プロジェクトの主要コンポーネントと依存関係を特定する
@@ -57,5 +81,7 @@ export const cursorRulesAgent = new Agent({
         tokeiAnalyzerTool,
         treeAnalyzerTool,
         fileProcessorTool,
+        vectorQueryTool,
     },
+    memory, // メモリを設定
 });

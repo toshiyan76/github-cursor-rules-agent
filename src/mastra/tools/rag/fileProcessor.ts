@@ -3,9 +3,9 @@ import { z } from "zod";
 import fs from "fs/promises";
 import path from "path";
 import { MDocument } from "@mastra/rag";
-import { openai } from "@ai-sdk/openai";
 import { embedMany } from "ai";
 import { LibSQLVector } from "@mastra/core/vector/libsql";
+import { google } from "@ai-sdk/google";
 
 /**
  * ファイルを処理してチャンキング、ベクトル化、保存を行うツール
@@ -147,7 +147,7 @@ export const fileProcessorTool = createTool({
 
             // 埋め込みベクトルを生成
             const { embeddings } = await embedMany({
-                model: openai.embedding("text-embedding-3-small"),
+                model: google.textEmbeddingModel("text-embedding-004"),
                 values: chunks.map((chunk) => chunk.text),
             });
 

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { LibSQLVector } from "@mastra/core/vector/libsql";
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
+import { google } from "@ai-sdk/google";
 
 /**
  * ベクトルデータベースからクエリを実行するツール
@@ -50,16 +51,14 @@ export const vectorQueryTool = createTool({
 
             // クエリをベクトル化
             const { embedding } = await embed({
-                model: openai.embedding("text-embedding-3-small"),
+                model: google.textEmbeddingModel("text-embedding-004"),
                 value: query,
             });
 
             // ベクトル検索を実行
             const searchResults = await vectorStore.query({
                 indexName: indexName,
-                vector: embedding,
-                limit: limit,
-                threshold: threshold,
+                queryVector: embedding,
             });
 
             if (!searchResults || searchResults.length === 0) {

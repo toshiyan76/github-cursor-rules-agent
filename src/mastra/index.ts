@@ -15,3 +15,21 @@ export const mastra = new Mastra({
         level: "info",
     }),
 });
+
+(async () => {
+    const { runId, start } = mastra
+        .getWorkflow("cursorRulesWorkflow")
+        .createRun();
+
+    console.log("Run", runId);
+
+    const runResult = await start({
+        triggerData: {
+            repositoryUrl: "https://github.com/honojs/hono",
+            branch: "main",
+            outputPath: "./examples/rules",
+        },
+    });
+
+    console.log("Final output:", runResult.results);
+})();
