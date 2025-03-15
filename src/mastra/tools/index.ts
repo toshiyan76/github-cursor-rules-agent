@@ -14,3 +14,6 @@ export { fileProcessorTool } from "./rag/fileProcessor";
 
 // ベクトルツール
 export { vectorQueryTool } from "./rag/vectorQuery";
+
+// チートシートツール
+export { saveCheatsheetTool } from "./cheatsheet";

@@ -8,8 +8,9 @@ import {
     tokeiAnalyzerTool,
     treeAnalyzerTool,
     fileProcessorTool,
+    vectorQueryTool,
+    saveCheatsheetTool,
 } from "../tools";
-import { vectorQueryTool } from "../tools/rag/vectorQuery";
 import { googleAIModel } from "../models";
 
 // メモリの設定（LibSQLをストレージとベクターデータベースに使用）
@@ -87,7 +88,13 @@ export const cursorRulesAgent = new Agent({
 インデックス名には必ず英数字とアンダースコアのみを使用してください。ハイフンや特殊文字を使うとエラーになります。
 例えば "hono-index" ではなく "hono_index" を使用してください。
 
-重要な注意点：エンベディング処理でAPIキーエラーが発生した場合でも、チャンキング処理は続行してください。その場合は、収集したファイルの内容を直接分析してチートシートを作成します。`,
+重要な注意点：エンベディング処理でAPIキーエラーが発生した場合でも、チャンキング処理は続行してください。その場合は、収集したファイルの内容を直接分析してチートシートを作成します。
+
+チートシート生成に関する注意：
+長いチートシートを生成する場合は、複数のセクションに分割して、各セクションを個別に生成してsave-cheatsheetツールで順番に保存してください。
+これにより、トークン制限を回避して詳細なチートシートを作成できます。
+最初のセクション保存時はappend=falseで、それ以降のセクションはappend=trueで追記モードを使用してください。
+`,
     model: googleAIModel,
     tools: {
         cloneRepositoryTool,
@@ -96,6 +103,7 @@ export const cursorRulesAgent = new Agent({
         treeAnalyzerTool,
         fileProcessorTool,
         vectorQueryTool,
+        saveCheatsheetTool,
     },
     memory,
 });
