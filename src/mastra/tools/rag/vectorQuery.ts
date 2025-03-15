@@ -18,8 +18,6 @@ export const vectorQueryTool = createTool({
             .default("vector_store.db")
             .describe("ベクトルストアのDBパス"),
         indexName: z.string().describe("ベクトルストアのインデックス名"),
-        limit: z.number().default(20).describe("取得する結果の数"),
-        threshold: z.number().default(0.7).describe("類似度のしきい値（0～1）"),
     }),
     outputSchema: z.object({
         success: z.boolean(),
@@ -37,7 +35,7 @@ export const vectorQueryTool = createTool({
             .optional(),
     }),
     execute: async ({ context }) => {
-        const { query, dbPath, indexName, limit, threshold } = context;
+        const { query, dbPath, indexName } = context;
 
         try {
             // ベクトルストアを初期化
