@@ -11,3 +11,6 @@ export { treeAnalyzerTool } from "./analysis/treeAnalyzer";
 
 // RAGツール
 export { fileProcessorTool } from "./rag/fileProcessor";
+
+// ベクトルツール
+export { vectorQueryTool } from "./rag/vectorQuery";

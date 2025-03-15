@@ -16,20 +16,20 @@ export const mastra = new Mastra({
     }),
 });
 
-(async () => {
-    const { runId, start } = mastra
-        .getWorkflow("cursorRulesWorkflow")
-        .createRun();
+// (async () => {
+//     const { runId, start } = mastra
+//         .getWorkflow("cursorRulesWorkflow")
+//         .createRun();
 
-    console.log("Run", runId);
+//     console.log("Run", runId);
 
-    const runResult = await start({
-        triggerData: {
-            repositoryUrl: "https://github.com/honojs/hono",
-            branch: "main",
-            outputPath: "./examples/rules",
-        },
-    });
+//     const runResult = await start({
+//         triggerData: {
+//             repositoryUrl: "https://github.com/honojs/hono",
+//             branch: "main",
+//             outputPath: "./examples/rules",
+//         },
+//     });
 
-    console.log("Final output:", runResult.results);
-})();
+//     console.log("Final output:", runResult.results);
+// })();

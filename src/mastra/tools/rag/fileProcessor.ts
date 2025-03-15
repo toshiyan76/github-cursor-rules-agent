@@ -5,7 +5,7 @@ import path from "path";
 import { MDocument } from "@mastra/rag";
 import { embedMany } from "ai";
 import { LibSQLVector } from "@mastra/core/vector/libsql";
-import { google } from "@ai-sdk/google";
+import { googleEmbeddingModel } from "../../models";
 
 /**
  * ファイルを処理してチャンキング、ベクトル化、保存を行うツール
@@ -35,10 +35,7 @@ export const fileProcessorTool = createTool({
             .string()
             .default("vector_store.db")
             .describe("ベクトルストアのDBパス"),
-        indexName: z
-            .string()
-            .default("code_chunks")
-            .describe("ベクトルストアのインデックス名"),
+        indexName: z.string().describe("ベクトルストアのインデックス名"),
         extractMetadata: z
             .boolean()
             .default(true)
@@ -134,55 +131,100 @@ export const fileProcessorTool = createTool({
                 };
             }
 
-            // LibSQLVectorライブラリを使用してベクトルストアを初期化
-            const vectorStore = new LibSQLVector({
-                connectionUrl: `file:${dbPath}`,
-            });
+            // チャンク処理成功のログ（埋め込み処理なしの場合のフォールバック用）
+            console.log(
+                `ファイル ${filePath} から ${chunks.length} 個のチャンクを抽出しました`
+            );
 
-            // 必要に応じてインデックスを作成
-            await vectorStore.createIndex({
-                indexName: indexName,
-                dimension: 1536, // OpenAI embedding-3-small の次元数
-            });
+            try {
+                // LibSQLVectorライブラリを使用してベクトルストアを初期化
+                const vectorStore = new LibSQLVector({
+                    connectionUrl: `file:${dbPath}`,
+                });
 
-            // 埋め込みベクトルを生成
-            const { embeddings } = await embedMany({
-                model: google.textEmbeddingModel("text-embedding-004"),
-                values: chunks.map((chunk) => chunk.text),
-            });
+                // 必要に応じてインデックスを作成
+                await vectorStore.createIndex({
+                    indexName: indexName,
+                    dimension: 768, // Google text-embedding-004 の次元数
+                });
 
-            // メタデータを準備
-            const metadata = chunks.map((chunk) => ({
-                text: chunk.text,
-                filePath: filePath,
-                fileType: fileType,
-                ...(chunk.metadata || {}),
-            }));
+                // 埋め込みベクトルを生成
+                // Googleのモデルは一度に最大100個のリクエストしか処理できないため、バッチ処理を実装
+                const batchSize = 100;
+                let allEmbeddings = [];
 
-            // ベクトルストアに保存
-            await vectorStore.upsert({
-                indexName: indexName,
-                vectors: embeddings,
-                metadata: metadata,
-            });
+                for (let i = 0; i < chunks.length; i += batchSize) {
+                    const batchChunks = chunks.slice(i, i + batchSize);
+                    console.log(
+                        `バッチ処理: ${i + 1}〜${Math.min(i + batchSize, chunks.length)}/${chunks.length}チャンク`
+                    );
 
-            return {
-                success: true,
-                message: `ファイル ${filePath} のチャンキングと埋め込みが完了しました。${chunks.length}個のチャンクを作成しました。`,
-                filePath,
-                strategy,
-                chunkCount: chunks.length,
-                fileType,
-                metadata: {
-                    totalChunks: chunks.length,
-                    averageChunkLength: Math.round(
-                        chunks.reduce(
-                            (sum, chunk) => sum + chunk.text.length,
-                            0
-                        ) / chunks.length
-                    ),
-                },
-            };
+                    const { embeddings } = await embedMany({
+                        model: googleEmbeddingModel,
+                        values: batchChunks.map((chunk) => chunk.text),
+                    });
+
+                    allEmbeddings.push(...embeddings);
+                }
+
+                // メタデータを準備
+                const metadata = chunks.map((chunk) => ({
+                    text: chunk.text,
+                    filePath: filePath,
+                    fileType: fileType,
+                    ...(chunk.metadata || {}),
+                }));
+
+                // ベクトルストアに保存（こちらもバッチ処理）
+                for (let i = 0; i < allEmbeddings.length; i += batchSize) {
+                    const batchEmbeddings = allEmbeddings.slice(
+                        i,
+                        i + batchSize
+                    );
+                    const batchMetadata = metadata.slice(i, i + batchSize);
+
+                    console.log(
+                        `ベクトル保存: ${i + 1}〜${Math.min(i + batchSize, allEmbeddings.length)}/${allEmbeddings.length}ベクトル`
+                    );
+
+                    await vectorStore.upsert({
+                        indexName: indexName,
+                        vectors: batchEmbeddings,
+                        metadata: batchMetadata,
+                    });
+                }
+
+                return {
+                    success: true,
+                    message: `ファイル ${filePath} のチャンキングと埋め込みが完了しました。${chunks.length}個のチャンクを作成しました。`,
+                    filePath,
+                    strategy,
+                    chunkCount: chunks.length,
+                    fileType,
+                    metadata: {
+                        totalChunks: chunks.length,
+                        averageChunkLength: Math.round(
+                            chunks.reduce(
+                                (sum, chunk) => sum + chunk.text.length,
+                                0
+                            ) / chunks.length
+                        ),
+                    },
+                };
+            } catch (embeddingError: any) {
+                // 埋め込み処理が失敗した場合でもチャンキング結果を返す
+                console.warn(
+                    `埋め込み処理でエラーが発生しました: ${embeddingError.message}`
+                );
+                return {
+                    success: true,
+                    message: `ファイル ${filePath} のチャンキングは成功しましたが、埋め込み処理でエラーが発生しました: ${embeddingError.message}`,
+                    filePath,
+                    strategy,
+                    chunkCount: chunks.length,
+                    fileType,
+                };
+            }
         } catch (error: any) {
             return {
                 success: false,

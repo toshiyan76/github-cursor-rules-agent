@@ -1,9 +1,8 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import { LibSQLVector } from "@mastra/core/vector/libsql";
-import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
-import { google } from "@ai-sdk/google";
+import { googleEmbeddingModel } from "../../models";
 
 /**
  * ベクトルデータベースからクエリを実行するツール
@@ -18,11 +17,8 @@ export const vectorQueryTool = createTool({
             .string()
             .default("vector_store.db")
             .describe("ベクトルストアのDBパス"),
-        indexName: z
-            .string()
-            .default("code_chunks")
-            .describe("ベクトルストアのインデックス名"),
-        limit: z.number().default(5).describe("取得する結果の数"),
+        indexName: z.string().describe("ベクトルストアのインデックス名"),
+        limit: z.number().default(20).describe("取得する結果の数"),
         threshold: z.number().default(0.7).describe("類似度のしきい値（0～1）"),
     }),
     outputSchema: z.object({
@@ -49,40 +45,52 @@ export const vectorQueryTool = createTool({
                 connectionUrl: `file:${dbPath}`,
             });
 
-            // クエリをベクトル化
-            const { embedding } = await embed({
-                model: google.textEmbeddingModel("text-embedding-004"),
-                value: query,
-            });
+            try {
+                // クエリをベクトル化
+                const { embedding } = await embed({
+                    model: googleEmbeddingModel,
+                    value: query,
+                });
 
-            // ベクトル検索を実行
-            const searchResults = await vectorStore.query({
-                indexName: indexName,
-                queryVector: embedding,
-            });
+                // ベクトル検索を実行
+                const searchResults = await vectorStore.query({
+                    indexName: indexName,
+                    queryVector: embedding,
+                });
 
-            if (!searchResults || searchResults.length === 0) {
+                if (!searchResults || searchResults.length === 0) {
+                    return {
+                        success: true,
+                        message: "クエリに一致する結果が見つかりませんでした。",
+                        results: [],
+                    };
+                }
+
+                // 結果を整形
+                const formattedResults = searchResults.map((result: any) => ({
+                    text: result.metadata?.text || "",
+                    filePath: result.metadata?.filePath || "",
+                    fileType: result.metadata?.fileType || "",
+                    similarity: result.similarity,
+                    metadata: result.metadata || {},
+                }));
+
                 return {
                     success: true,
-                    message: "クエリに一致する結果が見つかりませんでした。",
+                    message: `${searchResults.length}件の結果が見つかりました。`,
+                    results: formattedResults,
+                };
+            } catch (embeddingError: any) {
+                // エンベディングエラーが発生した場合は、ダミーの結果を返す
+                console.warn(
+                    `エンベディング処理でエラーが発生しました: ${embeddingError.message}`
+                );
+                return {
+                    success: false,
+                    message: `エンベディング処理でエラーが発生しました: ${embeddingError.message}`,
                     results: [],
                 };
             }
-
-            // 結果を整形
-            const formattedResults = searchResults.map((result: any) => ({
-                text: result.metadata?.text || "",
-                filePath: result.metadata?.filePath || "",
-                fileType: result.metadata?.fileType || "",
-                similarity: result.similarity,
-                metadata: result.metadata || {},
-            }));
-
-            return {
-                success: true,
-                message: `${searchResults.length}件の結果が見つかりました。`,
-                results: formattedResults,
-            };
         } catch (error: any) {
             return {
                 success: false,

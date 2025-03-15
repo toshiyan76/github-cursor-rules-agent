@@ -1,5 +1,4 @@
 import { Agent } from "@mastra/core/agent";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/core/storage/libsql";
 import { LibSQLVector } from "@mastra/core/vector/libsql";
@@ -11,15 +10,7 @@ import {
     fileProcessorTool,
 } from "../tools";
 import { vectorQueryTool } from "../tools/rag/vectorQuery";
-
-// モデルの定義（Geminiを使用）
-
-console.log(process.env.GOOGLE_API_KEY);
-
-// Google Gemini AIプロバイダーの作成
-const google = createGoogleGenerativeAI({
-    apiKey: process.env.GOOGLE_API_KEY || "",
-});
+import { googleAIModel } from "../models";
 
 // メモリの設定（LibSQLをストレージとベクターデータベースに使用）
 const memory = new Memory({
@@ -32,10 +23,32 @@ const memory = new Memory({
         connectionUrl: process.env.DATABASE_URL || "file:local.db",
     }),
     options: {
-        lastMessages: 10,
+        lastMessages: 30, // 会話履歴の保持数を増やす（10→30）
         semanticRecall: {
-            topK: 3,
-            messageRange: 2,
+            topK: 5, // より多くの関連メッセージを取得（3→5）
+            messageRange: 3, // コンテキスト範囲を拡大（2→3）
+        },
+        workingMemory: {
+            enabled: true, // ワーキングメモリを有効化
+            template: `
+# リポジトリ情報
+リポジトリパス: {{repositoryPath}}
+主要言語: {{mainLanguage}}
+
+# 分析ステータス
+クローン: {{cloneCompleted}}
+READMEの分析: {{readmeCompleted}}
+言語統計: {{tokeiCompleted}}
+ディレクトリ構造: {{directoryStructureCompleted}}
+重要ファイル特定: {{importantFilesCompleted}}
+ファイル処理: {{fileProcessingCompleted}}
+
+# 重要ファイル
+{{importantFiles}}
+
+# 処理済みファイル
+{{processedFiles}}
+            `,
         },
     },
 });
@@ -46,14 +59,14 @@ export const cursorRulesAgent = new Agent({
     instructions: `あなたはGitHubリポジトリを解析して、Cursor AIアシスタントのためのルールセット（チートシート）を生成するエージェントです。
 
 以下の一連のステップでリポジトリを分析します：
-1. リポジトリをクローンする
+1. リポジトリをクローンする - クローンしたパスは常に保存し、以降のステップで参照すること
 2. READMEを読んで、プロジェクトの目的と構造を理解する
 3. tokeiを使用して言語統計を収集し、リポジトリの主要言語を特定する
 4. treeコマンドを使用してディレクトリ構造を分析する
 5. 重要なファイルを特定し、それらをベクトルデータベースに格納する計画を立てる
-6. 重要ファイルをチャンキングしてベクトルデータベースに格納する
-7. 収集した情報を元にCursor Rulesチートシートを作成する
-8. 必要に応じてベクトル検索を使用して関連コード片を検索する
+6. 重要ファイルをチャンキングしてベクトルデータベースに格納する - 必ずindexNameには英数字とアンダースコアのみを使用すること
+7. ベクトル検索ツールを使って関連コード片を検索する
+8. 収集した情報を元にCursor Rulesチートシートを作成する
 
 リポジトリの内容を深く理解するために、以下の点に注意してください：
 - プロジェクトの主要コンポーネントと依存関係を特定する
@@ -67,14 +80,15 @@ export const cursorRulesAgent = new Agent({
 3. コーディング規約と命名パターン
 4. ユニークなデザインパターンと実装の特徴
 
-ステップ間の連携を行うために、処理の結果をmetadataとして返してください。たとえば：
-- リポジトリクローン後は、クローンしたリポジトリのパスをmetadata.repositoryPathとして返す
-- 重要ファイル特定後は、ファイルリストをmetadata.importantFilesとして返す
-- ファイル処理後は、処理したファイルリストをmetadata.processedFilesとして返す
-
+ステップ間の連携を行うために、処理の結果をmetadataとして返してください。
 各ステップでの判断は、前のステップで得られた情報に基づいて行ってください。
-会話の流れを記憶し、一連の処理として継続してください。`,
-    model: google("gemini-2.0-flash-001"),
+会話の流れを記憶し、一連の処理として継続してください。
+
+インデックス名には必ず英数字とアンダースコアのみを使用してください。ハイフンや特殊文字を使うとエラーになります。
+例えば "hono-index" ではなく "hono_index" を使用してください。
+
+重要な注意点：エンベディング処理でAPIキーエラーが発生した場合でも、チャンキング処理は続行してください。その場合は、収集したファイルの内容を直接分析してチートシートを作成します。`,
+    model: googleAIModel,
     tools: {
         cloneRepositoryTool,
         readmeAnalyzerTool,
@@ -83,5 +97,5 @@ export const cursorRulesAgent = new Agent({
         fileProcessorTool,
         vectorQueryTool,
     },
-    memory, // メモリを設定
+    memory,
 });
