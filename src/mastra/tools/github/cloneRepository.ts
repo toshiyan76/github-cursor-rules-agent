@@ -25,8 +25,6 @@ export const cloneOutputSchema = z
     })
     .describe("リポジトリクローン操作の結果");
 
-export type CloneOutput = z.infer<typeof cloneOutputSchema>;
-
 /**
  * GitHub リポジトリをクローンするツール
  * LFS対応とサブモジュール処理も可能
