@@ -11,7 +11,7 @@ import {
     vectorQueryTool,
     saveCheatsheetTool,
 } from "../tools";
-import { openRouter } from "../models";
+import { google, openRouter } from "../models";
 
 // メモリの設定（LibSQLをストレージとベクターデータベースに使用）
 const memory = new Memory({
@@ -31,33 +31,11 @@ const memory = new Memory({
         },
         workingMemory: {
             enabled: true, // ワーキングメモリを有効化
-            template: `
-# リポジトリ情報
-リポジトリパス: {{repositoryPath}}
-主要言語: {{mainLanguage}}
-
-# 分析ステータス
-クローン: {{cloneCompleted}}
-READMEの分析: {{readmeCompleted}}
-言語統計: {{tokeiCompleted}}
-ディレクトリ構造: {{directoryStructureCompleted}}
-重要ファイル特定: {{importantFilesCompleted}}
-ファイル処理: {{fileProcessingCompleted}}
-
-# 重要ファイル
-{{importantFiles}}
-
-# 処理済みファイル
-{{processedFiles}}
-            `,
         },
     },
 });
 
-// 単一のCursor Rules生成エージェント
-export const cursorRulesAgent = new Agent({
-    name: "Cursor Rules生成エージェント",
-    instructions: `あなたはGitHubリポジトリを解析して、Cursor AIアシスタントのためのルールセット（チートシート）を生成するエージェントです。
+const instructionPrompt = `あなたはGitHubリポジトリを解析して、Cursor AIアシスタントのためのルールセット（チートシート）を生成するエージェントです。
 
 以下の一連のステップでリポジトリを分析します：
 1. リポジトリをクローンする - クローンしたパスは常に保存し、以降のステップで参照すること
@@ -94,8 +72,15 @@ export const cursorRulesAgent = new Agent({
 長いチートシートを生成する場合は、複数のセクションに分割して、各セクションを個別に生成してsave-cheatsheetツールで順番に保存してください。
 これにより、トークン制限を回避して詳細なチートシートを作成できます。
 最初のセクション保存時はappend=falseで、それ以降のセクションはappend=trueで追記モードを使用してください。
-`,
-    model: openRouter,
+`;
+
+const isGemini = process.env.MODEL === "gemini";
+
+// 単一のCursor Rules生成エージェント
+export const cursorRulesAgent = new Agent({
+    name: "Cursor Rules生成エージェント",
+    instructions: instructionPrompt,
+    model: isGemini ? google("gemini-2.0-flash-001") : openRouter,
     tools: {
         cloneRepositoryTool,
         readmeAnalyzerTool,
