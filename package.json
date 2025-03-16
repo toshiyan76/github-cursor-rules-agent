@@ -19,7 +19,6 @@
         "@mastra/core": "^0.6.0",
         "@mastra/memory": "^0.2.1",
         "@mastra/rag": "^0.1.9",
-        "ai": "^4.0.0",
         "mastra": "^0.3.1",
         "openai": "^4.87.3",
         "zod": "^3.24.2"
