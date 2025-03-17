@@ -160,7 +160,7 @@ github-cursor-rules-agent/
 
 ## 関連リソース
 
-- 書籍「Mastraで作るAIエージェント入門 〜GitHub解析で学ぶ自動化の第一歩〜」
+- [書籍「Mastraで作るAIエージェント入門 〜GitHub解析で学ぶ自動化の第一歩〜」](https://zenn.dev/serinuntius/books/4346a0fc6818f3)
 - [Mastra公式ドキュメント](https://mastra.ai/)
 - [Cursor AIエディタ](https://cursor.sh/)
 
