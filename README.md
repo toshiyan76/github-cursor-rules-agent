@@ -61,7 +61,7 @@ Mastraには直感的な開発用UIが付属しており、エージェントと
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/noplan-inc/github-cursor-rules-agent.git
+git clone https://github.com/serinuntius/github-cursor-rules-agent.git
 cd github-cursor-rules-agent
 
 # 依存パッケージのインストール
