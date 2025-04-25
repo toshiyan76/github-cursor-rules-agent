@@ -11,7 +11,7 @@ import {
     vectorQueryTool,
     saveCheatsheetTool,
 } from "../tools";
-import { google, openRouter } from "../models";
+import { google } from "../models";
 
 // メモリの設定（LibSQLをストレージとベクターデータベースに使用）
 const memory = new Memory({
@@ -74,13 +74,11 @@ const instructionPrompt = `あなたはGitHubリポジトリを解析して、Cu
 最初のセクション保存時はappend=falseで、それ以降のセクションはappend=trueで追記モードを使用してください。
 `;
 
-const isGemini = process.env.MODEL === "gemini";
-
-// 単一のCursor Rules生成エージェント
+// 単一のCursor Rules生成エージェント（Google Gemini専用）
 export const cursorRulesAgent = new Agent({
     name: "Cursor Rules生成エージェント",
     instructions: instructionPrompt,
-    model: isGemini ? google("gemini-2.0-flash-001") : openRouter,
+    model: google("gemini-2.0-flash-001"),
     tools: {
         cloneRepositoryTool,
         readmeAnalyzerTool,
